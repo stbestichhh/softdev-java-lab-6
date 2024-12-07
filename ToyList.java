@@ -1,4 +1,4 @@
-import java.util.*
+import java.util.*;
 
 /**
  * A typed collection of Toys implemented by using a doubly linked list
@@ -67,7 +67,7 @@ public class ToyList<T extends Toy> implements List<T> {
   @Override
   public boolean contains(Object obj) {
     for (T toy : this) {
-      if (Object.equals(toy, obj)) {
+      if (Objects.equals(toy, obj)) {
         return true;
       }
     }
@@ -124,7 +124,7 @@ public class ToyList<T extends Toy> implements List<T> {
   public boolean remove(Object o) {
     Node<T> current = head;
     while (current != null) {
-      if (Object.equals(current.data, o)) {
+      if (Objects.equals(current.data, o)) {
         if (current.prev != null) {
           current.prev.next = current.next;
         } else {
@@ -163,7 +163,7 @@ public class ToyList<T extends Toy> implements List<T> {
   }
 
   @Override
-  public removeAll(Collection<?> c) {
+  public boolean removeAll(Collection<?> c) {
     boolean modified = false;
     for (Object toy : c) {
       while(remove(toy)) {
@@ -204,7 +204,7 @@ public class ToyList<T extends Toy> implements List<T> {
   public int indexOf(Object o) {
     int index = 0;
     for (T toy : this) {
-      if (Object.equals(toy, o)) {
+      if (Objects.equals(toy, o)) {
         return index;
       }
       index++;
@@ -217,7 +217,7 @@ public class ToyList<T extends Toy> implements List<T> {
     int index = size - 1;
     Node<T> current = tail;
     while (current != null) {
-      if (Object.equals(current.data, o)) {
+      if (Objects.equals(current.data, o)) {
         return index;
       }
       current = current.prev;
@@ -226,7 +226,82 @@ public class ToyList<T extends Toy> implements List<T> {
     return -1;
   }
 
-  private getNode(int index) {
+  @Override
+  public List<T> subList(int fromIndex, int toIndex) {
+    if (fromIndex < 0 || toIndex > size || fromIndex > toIndex) {
+      throw new IndexOutOfBoundsException();
+    }
+
+    ToyList<T> subList = new ToyList<>();
+    Node<T> current = getNode(fromIndex);
+
+    for(int i = fromIndex; i < toIndex; i++) {
+      subList.add(current.data);
+      current = current.next;
+    }
+    return subList;
+  }
+
+  @Override
+  public ListIterator<T> listIterator() {
+    throw new UnsupportedOperationException("Unsupported operation");
+  }
+
+  @Override
+  public ListIterator<T> listIterator(int index) {
+    throw new UnsupportedOperationException("Unsupported operation");
+  }
+
+  @Override
+  public boolean retainAll(Collection<?> c) {
+    throw new UnsupportedOperationException("Unsupported operation");
+  }
+
+  @Override
+  public boolean addAll(int index, Collection<? extends T> c) {
+    throw new UnsupportedOperationException("Unsupported operation");
+  }
+
+  @Override
+  public <U> U[] toArray(U[] u) {
+    throw new UnsupportedOperationException("Unsupported operation");
+  }
+
+  @Override
+  public void add(int index, T element) {
+    if (index < 0 || index > size) {
+      throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + size);
+    }
+
+    Node<T> newNode = new Node<>(element);
+
+    if (index == 0) {
+      if (head == null) {
+        head = newNode;
+        tail = newNode;
+      } else {
+        newNode.next = head;
+        head.prev = newNode;
+        head = newNode;
+      }
+    } else if (index == size) {
+      tail.next = newNode;
+      newNode.prev = tail;
+      tail = newNode;
+    } else { 
+      Node<T> current = getNode(index);
+      Node<T> previous = current.prev;
+
+      previous.next = newNode;
+      newNode.prev = previous;
+      newNode.next = current;
+      current.prev = newNode;
+    }
+
+    size++;
+  }
+
+  private Node<T> getNode(int index) {
     if (index < 0 || index >= size) {
       throw new IndexOutOfBoundsException("Index: " + index + "\tSize: " + size);
     }

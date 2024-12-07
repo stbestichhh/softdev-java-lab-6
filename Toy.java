@@ -18,6 +18,6 @@ abstract class Toy {
 
   @Override
   public String toString() {
-    return "Toy{ name: " + this.name + ", age group: " + this.ageGroup + ", price: " + Double.toString(this.price);
+    return "Toy { name: " + this.name + ", age group: " + this.ageGroup + ", price: " + Double.toString(this.price) + " };";
   }
 }
